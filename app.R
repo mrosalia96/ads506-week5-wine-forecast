@@ -277,19 +277,20 @@ server <- function(input, output, session) {
     req(analysis())
     res <- analysis()
     hist <- dplyr::bind_rows(res$train, res$validation)
-    fc_all <- dplyr::bind_rows(res$fc_val, res$fc_future)
 
-    p <- fabletools::autoplot(fc_all, hist, level = c(80, 95), alpha = 0.18) +
+    # fbl_ts objects cannot be dplyr::bind_rows()-ed; layer validation then future.
+    p <- fabletools::autoplot(res$fc_val, hist, level = c(80, 95), alpha = 0.18) +
+      fabletools::autolayer(res$fc_future, level = c(80, 95), alpha = 0.12) +
       ggplot2::scale_y_continuous(labels = scales::comma) +
       ggplot2::labs(
         x = NULL,
         y = "Sales (thousands of litres)",
-        caption = "Grey history; coloured lines with ribbons = 80% and 95% forecast intervals"
+        caption = "Grey history; ribbons = 80% / 95% intervals (holdout + horizon)"
       ) +
       ggplot2::theme_minimal(base_size = 13) +
       ggplot2::theme(legend.position = "top")
 
-    if (length(unique(fc_all$Varietal)) > 1) {
+    if (length(unique(res$fc_val$Varietal)) > 1) {
       p <- p + ggplot2::facet_wrap(~Varietal, scales = "free_y", ncol = 1)
     }
 
