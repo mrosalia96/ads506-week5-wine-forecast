@@ -3,3 +3,5 @@ CLAIM_URL.txt
 context.tar.gz
 .Rhistory
 .Rproj.user
+Rplots.pdf
+.DS_Store
