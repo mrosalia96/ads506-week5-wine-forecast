@@ -1,0 +1,7 @@
+.git
+.Rhistory
+renv
+renv.lock
+context.tar.gz
+*.png
+*.pdf
